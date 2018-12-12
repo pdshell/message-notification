@@ -1,0 +1,15 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /v1
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://192.168.0.172:3306/walletcoin?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: test
+
+application:
+  eth:
+    eth-coinid: https://mainnet-eth.coinid.pro
