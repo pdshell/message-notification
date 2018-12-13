@@ -1,6 +1,5 @@
 package com.mwt.wallet.message.notification.web;
 
-import com.mwt.wallet.message.notification.web.pojo.eth.AddressHash;
 import com.mwt.wallet.message.notification.service.MessagesService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,8 @@ public class MessagesController {
 
     @PostMapping("/ethMessageNotification")
     @ApiOperation("获取eth的消息通知")
-    public ResponseEntity ethMessageNotification(@RequestBody AddressHash addressHash) {
-        return ResponseEntity.ok(Collections.singletonMap("message", messagesService.ethMessageNotification(addressHash)));
+    public ResponseEntity ethMessageNotification() {
+        return ResponseEntity.ok(Collections.singletonMap("message", messagesService.ethMessageNotification()));
     }
 
     @GetMapping("/getTransactionByHash")
@@ -29,11 +28,21 @@ public class MessagesController {
         return ResponseEntity.ok(messagesService.getTransactionByHash(hash));
     }
 
+    @GetMapping("/blockNumber")
+    @ApiOperation("获取区块数量")
+    public ResponseEntity blockNumber() {
+        return ResponseEntity.ok(messagesService.blockNumber());
+    }
+
+    @GetMapping("/getTransactionByBlockNumberAndIndex")
+    @ApiOperation("通过区块高度和第几笔交易获取交易记录")
+    public ResponseEntity getTransactionByBlockNumberAndIndex(String blockNumber, String index) {
+        return ResponseEntity.ok(messagesService.getTransactionByBlockNumberAndIndex(blockNumber, index));
+    }
+
     @GetMapping("/getTransactionReceipt")
     @ApiOperation("是否生成交易记录以及成功或失败")
     public ResponseEntity getTransactionReceipt(String hash) {
         return ResponseEntity.ok(messagesService.getTransactionReceipt(hash));
     }
-
-
 }
