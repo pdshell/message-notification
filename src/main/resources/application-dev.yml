@@ -13,3 +13,7 @@ spring:
 application:
   eth:
     eth-coinid: https://mainnet-eth.coinid.pro
+  btc:
+    btc-coinid: https://mainnet-btc.coinid.pro
+  eos:
+    eos-coinid: https://mainnet-eos.coinid.pro

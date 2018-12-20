@@ -1,4 +1,4 @@
-package com.mwt.wallet.message.notification.web.pojo.eth;
+package com.mwt.wallet.message.notification.web.pojo;
 
 import lombok.Data;
 

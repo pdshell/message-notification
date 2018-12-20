@@ -1,6 +1,6 @@
 package com.mwt.wallet.message.notification.web;
 
-import com.mwt.wallet.message.notification.service.MessagesService;
+import com.mwt.wallet.message.notification.service.EthMessagesService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +10,11 @@ import java.util.Collections;
 
 
 @RestController
-@RequestMapping("api/mobile")
-public class MessagesController {
+@RequestMapping("api/mobile/eth")
+public class EthMessagesController {
 
     @Autowired
-    private MessagesService messagesService;
+    private EthMessagesService messagesService;
 
     @PostMapping("/ethMessageNotification")
     @ApiOperation("获取eth的消息通知")
@@ -32,6 +32,12 @@ public class MessagesController {
     @ApiOperation("获取区块数量")
     public ResponseEntity blockNumber() {
         return ResponseEntity.ok(messagesService.blockNumber());
+    }
+
+    @GetMapping("/getBalance")
+    @ApiOperation("获取用户的余额")
+    public ResponseEntity getBalance(String account, String blockStatus) {
+        return ResponseEntity.ok(messagesService.getBalance(account, blockStatus));
     }
 
     @GetMapping("/getTransactionByBlockNumberAndIndex")

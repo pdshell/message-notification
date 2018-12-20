@@ -9,9 +9,16 @@ public class ApplicationProperties {
 
     public ETH eth;
 
+    public BTC btc;
+
     @Data
     public static class ETH {
         String ethCoinid = "";
+    }
+
+    @Data
+    public static class BTC {
+        String btcCoinid = "";
     }
 
 
