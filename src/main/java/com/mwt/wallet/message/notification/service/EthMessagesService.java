@@ -1,6 +1,7 @@
 package com.mwt.wallet.message.notification.service;
 
 import com.mwt.wallet.message.notification.Constant.ETHConstant;
+import com.mwt.wallet.message.notification.Constant.TransactionStateConstant;
 import com.mwt.wallet.message.notification.client.EthCoinidClient;
 import com.mwt.wallet.message.notification.util.StringUtils;
 import com.mwt.wallet.message.notification.web.pojo.CoinIdVM;
@@ -73,18 +74,36 @@ public class EthMessagesService {
         }
     }
 
-    public String ethNotifyState(String hash) {
+    public NotificationRQ ethNotifyState(String hash) {
         TransactionInfo.ResultBean result = getTransactionByHash(hash).getResult();
-        if (!Optional.ofNullable(result.getBlockNumber()).isPresent()) {
-            return "从" + result.getFrom() + "账户转账到" + result.getTo() + "账户 " + result.getValue() + " 转账状态为pending";
-        }
-        TransactionReceipt.ResultBean receipt = getTransactionReceipt(result.getHash()).getResult();
-        if (Optional.ofNullable(receipt).isPresent()) {
-            String status = Integer.parseInt(receipt.getStatus().substring(2), 16) == 1 ? "success" : "failure";
-            return "从" + result.getFrom() + "账户转账到" + result.getTo() + "账户 " + result.getValue() + " 转账" + status;
+        if (Optional.ofNullable(result).isPresent()) {
+            NotificationRQ notificationRQ = new NotificationRQ();
+            if (!Optional.ofNullable(result.getBlockNumber()).isPresent()) {
+                notificationRQ.setFrom(result.getFrom());
+                notificationRQ.setValue(result.getValue());
+                notificationRQ.setTo(result.getTo());
+                notificationRQ.setState(TransactionStateConstant.PENDING);
+                return notificationRQ;
+            }
+            TransactionReceipt.ResultBean receipt = getTransactionReceipt(result.getHash()).getResult();
+            if (Optional.ofNullable(receipt).isPresent()) {
+                notificationRQ.setFrom(result.getFrom());
+                notificationRQ.setValue(result.getValue());
+                notificationRQ.setTo(result.getTo());
+                notificationRQ.setState(Integer.parseInt(receipt.getStatus().substring(2), 16) == 1
+                        ? TransactionStateConstant.SUCCESS
+                        : TransactionStateConstant.FAILURE);
+                return notificationRQ;
+            }
         }
         return null;
     }
 
-
+    public TransactionStateConstant getOrderState(String hash) {
+        NotificationRQ notificationRQ = ethNotifyState(hash);
+        if (Optional.ofNullable(notificationRQ).isPresent()) {
+            return notificationRQ.getState();
+        }
+        return TransactionStateConstant.PENDING;
+    }
 }

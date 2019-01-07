@@ -16,12 +16,17 @@ public class EthMessagesController {
     @Autowired
     private EthMessagesService messagesService;
 
-    @PostMapping("/ethMessageNotification")
+    @GetMapping("/ethMessageNotification")
     @ApiOperation("获取eth的消息通知")
-    public ResponseEntity ethMessageNotification() {
-        return ResponseEntity.ok(Collections.singletonMap("message", messagesService.ethMessageNotification()));
+    public ResponseEntity ethMessageNotification(String hash) {
+        return ResponseEntity.ok(messagesService.ethNotifyState(hash));
     }
 
+    @GetMapping("/getOrderState")
+    @ApiOperation("获取订单状态")
+    public ResponseEntity getOrderState(String hash) {
+        return ResponseEntity.ok(Collections.singletonMap("state",messagesService.getOrderState(hash)));
+    }
     @GetMapping("/getTransactionByHash")
     @ApiOperation("获取eth的交易详情")
     public ResponseEntity getTransactionByHash(String hash) {
