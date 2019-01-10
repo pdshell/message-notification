@@ -9,6 +9,8 @@ import com.mwt.wallet.message.notification.web.pojo.eth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,21 +57,26 @@ public class EthMessagesService {
         return ethCoinidClient.ethChainInfo(coinId).getResult();
     }
 
-
-    public List<String> ethMessageNotification() {
+    public List<NotificationRQ> ethMessageNotification() {
         BlockNumber blockNumber = blockNumber();
         long index = 0L;
-        List<String> messages = new ArrayList<>();
+        List<NotificationRQ> notificationRQS = new ArrayList<>();
         while (true) {
             TransactionInfo.ResultBean resultBean = getTransactionByBlockNumberAndIndex(blockNumber.getResult(), "0x" + Long.toHexString(index)).getResult();
-//            String value = StringUtils.ethBalanceConvert(Long.parseLong(resultBean.getValue().substring(2), 16) + "");
-            if (!Optional.ofNullable(resultBean).isPresent() && !messages.equals("[]")) {
-                return messages;
+            if (!Optional.ofNullable(resultBean).isPresent() && !"[]".equals(notificationRQS)) {
+                return notificationRQS;
             }
+            NotificationRQ notification = new NotificationRQ();
+            String value = resultBean.getValue().equals("0x0") ? "0 ETH"
+                    : StringUtils.ethBalanceConvert(new BigInteger(resultBean.getValue().substring(2), 16) + "");
+            notification.setFrom(resultBean.getFrom());
+            notification.setTo(resultBean.getTo());
+            notification.setValue(value);
             TransactionReceipt.ResultBean result = getTransactionReceipt(resultBean.getHash()).getResult();
-            String status = Integer.parseInt(result.getStatus().substring(2), 16) == 1 ? "success" : "failure";
-            String message = index + ". 从" + resultBean.getFrom() + "账户转账到" + resultBean.getTo() + "账户 " + resultBean.getValue() + " 转账" + status;
-            messages.add(message);
+            notification.setState(Integer.parseInt(result.getStatus().substring(2), 16) == 1
+                    ? TransactionStateConstant.SUCCESS
+                    : TransactionStateConstant.FAILURE);
+            notificationRQS.add(notification);
             index++;
         }
     }

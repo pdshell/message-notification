@@ -18,8 +18,8 @@ public class EthMessagesController {
 
     @GetMapping("/ethMessageNotification")
     @ApiOperation("获取eth的消息通知")
-    public ResponseEntity ethMessageNotification(String hash) {
-        return ResponseEntity.ok(messagesService.ethNotifyState(hash));
+    public ResponseEntity ethMessageNotification() {
+        return ResponseEntity.ok(messagesService.ethMessageNotification());
     }
 
     @GetMapping("/getOrderState")
