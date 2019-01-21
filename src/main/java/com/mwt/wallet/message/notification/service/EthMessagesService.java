@@ -9,7 +9,6 @@ import com.mwt.wallet.message.notification.web.pojo.eth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +55,7 @@ public class EthMessagesService {
         CoinIdVM coinId = StringUtils.getParameter(param, ETHConstant.METHOD_BALANCE.getName());
         return ethCoinidClient.ethChainInfo(coinId).getResult();
     }
+
 
     public List<NotificationRQ> ethMessageNotification() {
         BlockNumber blockNumber = blockNumber();
