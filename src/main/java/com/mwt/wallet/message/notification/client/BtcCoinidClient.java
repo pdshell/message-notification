@@ -4,8 +4,8 @@ import com.mwt.wallet.message.notification.web.pojo.CoinIdVM;
 import com.mwt.wallet.message.notification.web.pojo.btc.BlockChainRQ;
 import com.mwt.wallet.message.notification.web.pojo.btc.TransactionRQ;
 import com.mwt.wallet.message.notification.web.pojo.btc.TxHashRQ;
-import com.mwt.wallet.retrofitclientstarter.retrofit.BaseURL;
-import com.mwt.wallet.retrofitclientstarter.retrofit.Result;
+import com.mwt.wallet.retrofit.client.starter.BaseURL;
+import com.mwt.wallet.retrofit.client.starter.Result;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 

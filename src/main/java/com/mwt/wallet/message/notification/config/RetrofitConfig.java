@@ -1,6 +1,6 @@
 package com.mwt.wallet.message.notification.config;
 
-import com.mwt.wallet.retrofitclientstarter.retrofit.EnableRetrofitClients;
+import com.mwt.wallet.retrofit.client.starter.EnableRetrofitClients;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
