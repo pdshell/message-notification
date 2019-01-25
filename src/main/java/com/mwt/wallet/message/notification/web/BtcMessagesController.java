@@ -1,6 +1,7 @@
 package com.mwt.wallet.message.notification.web;
 
 import com.mwt.wallet.message.notification.service.BtcMessagesService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/mobile/btc")
+@Api(description = "btc",tags = "获取BTC相关数据")
 public class BtcMessagesController {
 
     @Autowired

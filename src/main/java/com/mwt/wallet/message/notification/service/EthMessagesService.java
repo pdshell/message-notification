@@ -9,6 +9,7 @@ import com.mwt.wallet.message.notification.web.pojo.eth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,28 +58,23 @@ public class EthMessagesService {
     }
 
 
-    public List<NotificationRQ> ethMessageNotification() {
+    public NotificationRQ ethMessageNotification(String trxId) {
+        NotificationRQ notification = new NotificationRQ();
         BlockNumber blockNumber = blockNumber();
-        long index = 0L;
-        List<NotificationRQ> notificationRQS = new ArrayList<>();
-        while (true) {
-            TransactionInfo.ResultBean resultBean = getTransactionByBlockNumberAndIndex(blockNumber.getResult(), "0x" + Long.toHexString(index)).getResult();
-            if (!Optional.ofNullable(resultBean).isPresent() && !"[]".equals(notificationRQS)) {
-                return notificationRQS;
-            }
-            NotificationRQ notification = new NotificationRQ();
-            String value = resultBean.getValue().equals("0x0") ? "0 ETH"
-                    : StringUtils.ethBalanceConvert(new BigInteger(resultBean.getValue().substring(2), 16) + "");
-            notification.setFrom(resultBean.getFrom());
-            notification.setTo(resultBean.getTo());
+        TransactionInfo transactionInfo = getTransactionByHash(trxId);
+        if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()
+                && new Long(blockNumber.getResult()) - new Long(transactionInfo.getResult().getBlockNumber()) > 6) {
+            String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 ETH"
+                    : StringUtils.ethBalanceConvert(new BigInteger(transactionInfo.getResult().getValue().substring(2), 16) + "");
             notification.setValue(value);
-            TransactionReceipt.ResultBean result = getTransactionReceipt(resultBean.getHash()).getResult();
+            notification.setFrom(transactionInfo.getResult().getFrom());
+            notification.setTo(transactionInfo.getResult().getTo());
+            TransactionReceipt.ResultBean result = getTransactionReceipt(trxId).getResult();
             notification.setState(Integer.parseInt(result.getStatus().substring(2), 16) == 1
                     ? TransactionStateConstant.SUCCESS
                     : TransactionStateConstant.FAILURE);
-            notificationRQS.add(notification);
-            index++;
         }
+        return notification;
     }
 
     public NotificationRQ ethNotifyState(String hash) {

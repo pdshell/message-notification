@@ -17,3 +17,5 @@ application:
     btc-coinid: https://mainnet-btc.coinid.pro
   eos:
     eos-coinid: https://mainnet-eos.coinid.pro
+  vns:
+    vns-coinid: https://mainnet-gvns.coinid.pro

@@ -5,21 +5,23 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 
 
 @RestController
-@RequestMapping("api/mobile/eth")
-@Api(description = "eth",tags = "获取ETH相关数据")
-public class EthMessagesController {
+@RequestMapping("api/mobile/vns")
+@Api(description = "vns",tags = "获取VNS相关数据")
+public class VNSMessagesController {
 
     @Autowired
     private EthMessagesService messagesService;
 
-    @GetMapping("/ethMessageNotification")
-    @ApiOperation("获取eth的消息通知")
+    @GetMapping("/vnsMessageNotification")
+    @ApiOperation("获取vns的消息通知")
     public ResponseEntity ethMessageNotification(String trxId) {
         return ResponseEntity.ok(messagesService.ethMessageNotification(trxId));
     }
