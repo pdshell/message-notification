@@ -10,6 +10,10 @@ spring:
     username: root
     password: test
 
+  redis:
+    host: 192.168.0.172
+    port: 6379
+
 application:
   eth:
     eth-coinid: https://mainnet-eth.coinid.pro
