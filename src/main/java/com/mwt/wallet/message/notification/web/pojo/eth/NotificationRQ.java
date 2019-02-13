@@ -5,9 +5,13 @@ import lombok.Data;
 
 @Data
 public class NotificationRQ {
+    private String trxId;
     private String from;
     private String to;
-    private TransactionStateConstant state;
+    private TransactionStateConstant trxState;
+    private String gasPrice;
+    private String gasLimit;
+    private String blHeight;
     private String value;
-
+    private String createTime;
 }

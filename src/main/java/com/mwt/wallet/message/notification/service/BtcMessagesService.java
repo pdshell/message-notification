@@ -53,5 +53,12 @@ public class BtcMessagesService {
         return btcCoinidClient.getBlockHash(coinId).getResult();
     }
 
+    public Object getMempool(String scriptHash){
+        List<Object> param = new ArrayList<>();
+        param.add(scriptHash);
+        CoinIdVM coinId = StringUtils.getParameter(param, BTCConstant.METHOD_MEMPOOL.getName());
+        return btcCoinidClient.getBlockHash(coinId).getResult();
+    }
+
 
 }

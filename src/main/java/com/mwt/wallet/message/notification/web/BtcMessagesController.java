@@ -47,6 +47,11 @@ public class BtcMessagesController {
         return ResponseEntity.ok(btcMessagesService.getBalance(scriptHash));
     }
 
+    @GetMapping("/getMempool")
+    @ApiOperation(value = "获取当前交易记录")
+    public ResponseEntity getMempool(String scriptHash) {
+        return ResponseEntity.ok(btcMessagesService.getMempool(scriptHash));
+    }
 
 
 

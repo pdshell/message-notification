@@ -2,12 +2,13 @@ package com.mwt.wallet.message.notification.web;
 
 import com.mwt.wallet.message.notification.Constant.BlockChain;
 import com.mwt.wallet.message.notification.service.MessageNotificationService;
+import com.mwt.wallet.message.notification.web.pojo.ClickMessageNotificationVM;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/mobile")
@@ -18,7 +19,14 @@ public class MessageNotificationController {
 
     @GetMapping("/getMessageNotification")
     @ApiOperation("获取eth，btc，vns的消息通知")
-    public ResponseEntity getMessageNotification(String trxId, BlockChain blockChain) {
-        return ResponseEntity.ok(messageNotificationService.getMessageNotification(trxId, blockChain));
+    public ResponseEntity getMessageNotification(BlockChain blockChain, String addr) {
+        return ResponseEntity.ok(messageNotificationService.getMessageNotification(blockChain, addr));
     }
+
+    @PostMapping("/clickMessageNotification")
+    @ApiOperation("转账通知的已读和未读")
+    public ResponseEntity clickMessageNotification(@Valid @RequestBody ClickMessageNotificationVM clickMessageNotificationVM) {
+        return ResponseEntity.ok(messageNotificationService.clickMessageNotification(clickMessageNotificationVM));
+    }
+
 }
