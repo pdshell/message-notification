@@ -71,6 +71,7 @@ public class EthMessagesService {
         return messageNotification(BlockChain.ETH, addr);
     }
 
+    //0 未通知(节点未确认) 1 通知 2 已通知
     List<NotificationRQ> messageNotification(BlockChain blockChain, String addr) {
         Pageable pageable = PageRequest.of(1, 10, new Sort(Sort.Direction.DESC, "createTime"));
         Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndFromOrTo(blockChain, addr, addr, pageable);
@@ -95,6 +96,18 @@ public class EthMessagesService {
                         : TransactionStateConstant.FAILURE);
                 notification.setCreateTime(transactionStorageRQ.getCreateTime());
                 notificationRQS.add(notification);
+                switch (transactionStorageRQ.getStatus()) {
+                    case 0:
+                        transactionStorageRQ.setStatus(1);
+                        transactionStorageRepository.save(transactionStorageRQ);
+                        break;
+                    case 1:
+                        transactionStorageRQ.setStatus(2);
+                        transactionStorageRepository.save(transactionStorageRQ);
+                        break;
+                    case 2:
+                        break;
+                }
             }
         });
         return notificationRQS;

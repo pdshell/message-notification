@@ -1,6 +1,5 @@
 package com.mwt.wallet.message.notification.web;
 
-import com.mwt.wallet.message.notification.service.EthMessagesService;
 import com.mwt.wallet.message.notification.service.VNSMessagesService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,12 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-
-
 @RestController
 @RequestMapping("api/mobile/vns")
-@Api(description = "vns",tags = "获取VNS相关数据")
+@Api(description = "vns", tags = "获取VNS相关数据")
 public class VNSMessagesController {
 
     @Autowired
