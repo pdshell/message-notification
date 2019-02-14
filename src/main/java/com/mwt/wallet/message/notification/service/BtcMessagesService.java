@@ -86,7 +86,7 @@ public class BtcMessagesService {
                 if (transactionStorageRQ.getTrxId().equals(resultBean.getTx_hash())) {
                     TransactionRQ.ResultBean transactionRQ = getTransactionByTxHash(resultBean.getTx_hash(), true).getResult();
                     NotificationRQ notificationRQ = new NotificationRQ();
-//                    notificationRQ.setValue();
+                    notificationRQ.setValue(transactionRQ.getVout().get(0).getValue()+" BTC");
 //                    notificationRQ.setTxFee();
                     notificationRQ.setTimeStamp(DateUtil.longToString(transactionRQ.getTime() * 1000));
                     notificationRQ.setTrxId(transactionStorageRQ.getTrxId());
