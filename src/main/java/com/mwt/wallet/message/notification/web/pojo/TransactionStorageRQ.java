@@ -1,6 +1,5 @@
 package com.mwt.wallet.message.notification.web.pojo;
 
-import com.mwt.wallet.message.notification.Constant.BlockChain;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
@@ -23,7 +22,7 @@ public class TransactionStorageRQ {
 
     @NotNull
     @Indexed
-    private BlockChain type;
+    private String type;
     @Indexed
     private String from;
     @Indexed

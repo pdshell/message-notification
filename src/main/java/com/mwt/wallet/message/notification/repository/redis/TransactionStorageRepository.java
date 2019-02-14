@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionStorageRepository extends CrudRepository<TransactionStorageRQ, Long> {
-    Page<TransactionStorageRQ> findByTypeAndFromOrTo(BlockChain type, String from, String to, Pageable pageable);
+    Page<TransactionStorageRQ> findByTypeAndFromOrTo(String type, String from, String to, Pageable pageable);
 
     Optional<TransactionStorageRQ> findByTrxId(String trxId);
 }

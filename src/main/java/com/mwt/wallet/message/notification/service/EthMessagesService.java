@@ -70,18 +70,18 @@ public class EthMessagesService {
 
 
     public List<NotificationRQ> ethMessageNotification(String addr, Integer start, Integer limit) {
-        return messageNotification(BlockChain.ETH, addr, start, limit);
+        return messageNotification(BlockChain.ETH.getName(), addr, start, limit);
     }
 
     //0 未通知(节点未确认) 1 通知 2 已通知
-    List<NotificationRQ> messageNotification(BlockChain blockChain, String addr, Integer start, Integer limit) {
+    List<NotificationRQ> messageNotification(String type, String addr, Integer start, Integer limit) {
         Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
-        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndFromOrTo(blockChain, addr, addr, pageable);
+        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndFromOrTo(type.toUpperCase(), addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         transactionStorageRQPage.forEach(transactionStorageRQ -> {
             TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
             if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
-                String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + blockChain
+                String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + type.toUpperCase()
                         : StringUtils.ethBalanceConvert(new BigInteger(transactionInfo.getResult().getValue().substring(2), 16) + "");
                 NotificationRQ notification = new NotificationRQ();
                 notification.setValue(value);
