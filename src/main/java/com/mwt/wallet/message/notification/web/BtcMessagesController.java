@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/mobile/btc")
-@Api(description = "btc",tags = "获取BTC相关数据")
+@Api(description = "btc", tags = "获取BTC相关数据")
 public class BtcMessagesController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class BtcMessagesController {
     @GetMapping("/getTransactionHash")
     @ApiOperation(value = "获取交易记录")
     public ResponseEntity getTransactionHash(String scriptHash) {
-        return ResponseEntity.ok(btcMessagesService.getTransactionHash(scriptHash));
+        return ResponseEntity.ok(btcMessagesService.getTransactionByHash(scriptHash));
     }
 
     @GetMapping("/getBalance")
@@ -53,6 +53,11 @@ public class BtcMessagesController {
         return ResponseEntity.ok(btcMessagesService.getMempool(scriptHash));
     }
 
+    @GetMapping("/getTransactionByTxHash")
+    @ApiOperation(value = "获取交易数据")
+    public ResponseEntity getTransactionByTxHash(String txHash) {
+        return ResponseEntity.ok(btcMessagesService.getTransactionByTxHash(txHash, true));
+    }
 
 
 }

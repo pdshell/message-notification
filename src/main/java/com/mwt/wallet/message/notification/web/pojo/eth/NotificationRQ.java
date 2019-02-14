@@ -14,4 +14,6 @@ public class NotificationRQ {
     private String blHeight;
     private String value;
     private String createTime;
+    private String timeStamp;
+    private String txFee;
 }

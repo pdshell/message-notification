@@ -71,8 +71,8 @@ public class VNSMessagesService {
     }
 
 
-    public List<NotificationRQ> vnsMessageNotification(String addr) {
-        return ethMessagesService.messageNotification(BlockChain.VNS, addr);
+    public List<NotificationRQ> vnsMessageNotification(String addr, Integer start, Integer limit) {
+        return ethMessagesService.messageNotification(BlockChain.VNS, addr, start, limit);
     }
 
 }

@@ -5,6 +5,7 @@ import com.mwt.wallet.message.notification.Constant.ETHConstant;
 import com.mwt.wallet.message.notification.Constant.TransactionStateConstant;
 import com.mwt.wallet.message.notification.client.EthCoinidClient;
 import com.mwt.wallet.message.notification.repository.redis.TransactionStorageRepository;
+import com.mwt.wallet.message.notification.util.DateUtil;
 import com.mwt.wallet.message.notification.util.StringUtils;
 import com.mwt.wallet.message.notification.web.pojo.CoinIdVM;
 import com.mwt.wallet.message.notification.web.pojo.TransactionStorageRQ;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -67,20 +69,19 @@ public class EthMessagesService {
     }
 
 
-    public List<NotificationRQ> ethMessageNotification(String addr) {
-        return messageNotification(BlockChain.ETH, addr);
+    public List<NotificationRQ> ethMessageNotification(String addr, Integer start, Integer limit) {
+        return messageNotification(BlockChain.ETH, addr, start, limit);
     }
 
     //0 未通知(节点未确认) 1 通知 2 已通知
-    List<NotificationRQ> messageNotification(BlockChain blockChain, String addr) {
-        Pageable pageable = PageRequest.of(1, 10, new Sort(Sort.Direction.DESC, "createTime"));
+    List<NotificationRQ> messageNotification(BlockChain blockChain, String addr, Integer start, Integer limit) {
+        Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
         Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndFromOrTo(blockChain, addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         transactionStorageRQPage.forEach(transactionStorageRQ -> {
-//            BlockNumber blockNumber = blockNumber();
             TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
             if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
-                String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + blockChain.getName().toUpperCase()
+                String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + blockChain
                         : StringUtils.ethBalanceConvert(new BigInteger(transactionInfo.getResult().getValue().substring(2), 16) + "");
                 NotificationRQ notification = new NotificationRQ();
                 notification.setValue(value);
@@ -90,27 +91,32 @@ public class EthMessagesService {
                 notification.setGasLimit(transactionInfo.getResult().getGas());
                 notification.setFrom(transactionInfo.getResult().getFrom());
                 notification.setTo(transactionInfo.getResult().getTo());
+                notification.setCreateTime(DateUtil.longToString(transactionStorageRQ.getCreateTime()));
                 TransactionReceipt.ResultBean result = getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult();
                 notification.setTrxState(Integer.parseInt(result.getStatus().substring(2), 16) == 1
                         ? TransactionStateConstant.SUCCESS
                         : TransactionStateConstant.FAILURE);
-                notification.setCreateTime(transactionStorageRQ.getCreateTime());
                 notificationRQS.add(notification);
-                switch (transactionStorageRQ.getStatus()) {
-                    case 0:
-                        transactionStorageRQ.setStatus(1);
-                        transactionStorageRepository.save(transactionStorageRQ);
-                        break;
-                    case 1:
-                        transactionStorageRQ.setStatus(2);
-                        transactionStorageRepository.save(transactionStorageRQ);
-                        break;
-                    case 2:
-                        break;
-                }
+                updateTransactionStorage(transactionStorageRQ);
             }
         });
         return notificationRQS;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTransactionStorage(TransactionStorageRQ transactionStorageRQ) {
+        switch (transactionStorageRQ.getStatus()) {
+            case 0:
+                transactionStorageRQ.setStatus(1);
+                transactionStorageRepository.save(transactionStorageRQ);
+                break;
+            case 1:
+                transactionStorageRQ.setStatus(2);
+                transactionStorageRepository.save(transactionStorageRQ);
+                break;
+            case 2:
+                break;
+        }
     }
 
     public NotificationRQ ethNotifyState(String hash) {

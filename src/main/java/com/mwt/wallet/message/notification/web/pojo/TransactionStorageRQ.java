@@ -28,9 +28,9 @@ public class TransactionStorageRQ {
     private String from;
     @Indexed
     private String to;
-    private String createTime;
+    private Long createTime;
     @Indexed
     private int status;
-    @Indexed
+//    @Indexed
     private int state;
 }

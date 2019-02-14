@@ -19,18 +19,22 @@ public class MessageNotificationService {
     private VNSMessagesService vnsMessagesService;
 
     @Autowired
+    private BtcMessagesService btcMessagesService;
+
+    @Autowired
     private TransactionStorageRepository transactionStorageRepository;
 
-    public List<NotificationRQ> getMessageNotification(BlockChain blockChain, String addr) {
+    public List<NotificationRQ> getMessageNotification(BlockChain blockChain, String addr, Integer start, Integer limit) {
         List<NotificationRQ> notificationRQS = null;
         switch (blockChain) {
             case ETH:
-                notificationRQS = ethMessagesService.ethMessageNotification(addr);
+                notificationRQS = ethMessagesService.ethMessageNotification(addr, start, limit);
                 break;
             case BTC:
+                notificationRQS = btcMessagesService.btcMessageNotification(addr,start,limit);
                 break;
             case VNS:
-                notificationRQS = vnsMessagesService.vnsMessageNotification(addr);
+                notificationRQS = vnsMessagesService.vnsMessageNotification(addr, start, limit);
                 break;
         }
         return notificationRQS;

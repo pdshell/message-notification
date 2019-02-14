@@ -36,6 +36,7 @@ public class TransactionRQ {
             private ScriptSigBean scriptSig;
             private long sequence;
             private List<String> txinwitness;
+            private String coinbase;
 
             @Data
             public static class ScriptSigBean {

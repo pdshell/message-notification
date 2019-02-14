@@ -18,12 +18,6 @@ public class EthMessagesController {
     @Autowired
     private EthMessagesService messagesService;
 
-    @GetMapping("/ethMessageNotification")
-    @ApiOperation("获取eth的消息通知")
-    public ResponseEntity ethMessageNotification(String trxId) {
-        return ResponseEntity.ok(messagesService.ethMessageNotification(trxId));
-    }
-
     @GetMapping("/getOrderState")
     @ApiOperation("获取订单状态")
     public ResponseEntity getOrderState(String hash) {

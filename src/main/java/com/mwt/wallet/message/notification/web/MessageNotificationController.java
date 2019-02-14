@@ -19,8 +19,8 @@ public class MessageNotificationController {
 
     @GetMapping("/getMessageNotification")
     @ApiOperation("获取eth，btc，vns的消息通知")
-    public ResponseEntity getMessageNotification(BlockChain blockChain, String addr) {
-        return ResponseEntity.ok(messageNotificationService.getMessageNotification(blockChain, addr));
+    public ResponseEntity getMessageNotification(BlockChain blockChain, String addr, Integer start, Integer limit) {
+        return ResponseEntity.ok(messageNotificationService.getMessageNotification(blockChain, addr, start, limit));
     }
 
     @PostMapping("/clickMessageNotification")

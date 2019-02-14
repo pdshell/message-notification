@@ -17,12 +17,6 @@ public class VNSMessagesController {
     @Autowired
     private VNSMessagesService vnsMessagesService;
 
-    @GetMapping("/vnsMessageNotification")
-    @ApiOperation("获取vns的消息通知")
-    public ResponseEntity ethMessageNotification(String trxId) {
-        return ResponseEntity.ok(vnsMessagesService.vnsMessageNotification(trxId));
-    }
-
     @GetMapping("/getTransactionByHash")
     @ApiOperation("获取eth的交易详情")
     public ResponseEntity getTransactionByHash(String hash) {
