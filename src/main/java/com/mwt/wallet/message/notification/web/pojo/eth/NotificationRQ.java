@@ -16,4 +16,5 @@ public class NotificationRQ {
     private String createTime;
     private String timeStamp;
     private String txFee;
+    private String mome;
 }

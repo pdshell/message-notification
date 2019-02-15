@@ -91,6 +91,7 @@ public class EthMessagesService {
                 notification.setGasLimit(transactionInfo.getResult().getGas());
                 notification.setFrom(transactionInfo.getResult().getFrom());
                 notification.setTo(transactionInfo.getResult().getTo());
+                notification.setMome(transactionInfo.getResult().getInput());
                 notification.setCreateTime(DateUtil.longToString(transactionStorageRQ.getCreateTime()));
                 TransactionReceipt.ResultBean result = getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult();
                 notification.setTrxState(Integer.parseInt(result.getStatus().substring(2), 16) == 1
