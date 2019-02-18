@@ -47,7 +47,7 @@ public class MessageNotificationService {
                 notificationRQS = ethMessagesService.ethMessageNotificationList(addr, start, limit);
                 break;
             case BTC:
-                notificationRQS = btcMessagesService.btcMessageNotificationList(addr,start,limit);
+                notificationRQS = btcMessagesService.btcMessageNotificationList(addr, start, limit);
                 break;
             case VNS:
                 notificationRQS = vnsMessagesService.vnsMessageNotificationList(addr, start, limit);
@@ -63,26 +63,29 @@ public class MessageNotificationService {
                 switch (transactionStorageRQ.getState()) {
                     case 0:
                         transactionStorageRQ.setState(1);
+                        transactionStorageRepository.save(transactionStorageRQ);
                         break;
                     case 1:
                         break;
                     case 2:
                         transactionStorageRQ.setState(3);
+                        transactionStorageRepository.save(transactionStorageRQ);
                         break;
                 }
             } else {
                 switch (transactionStorageRQ.getState()) {
                     case 0:
                         transactionStorageRQ.setState(2);
+                        transactionStorageRepository.save(transactionStorageRQ);
                         break;
                     case 1:
                         transactionStorageRQ.setState(3);
+                        transactionStorageRepository.save(transactionStorageRQ);
                         break;
                     case 2:
                         break;
                 }
             }
-            transactionStorageRepository.save(transactionStorageRQ);
         });
         return true;
     }

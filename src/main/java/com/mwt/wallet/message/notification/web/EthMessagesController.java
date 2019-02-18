@@ -21,7 +21,7 @@ public class EthMessagesController {
     @GetMapping("/getOrderState")
     @ApiOperation("获取订单状态")
     public ResponseEntity getOrderState(String hash) {
-        return ResponseEntity.ok(Collections.singletonMap("state",messagesService.getOrderState(hash)));
+        return ResponseEntity.ok(Collections.singletonMap("trxState",messagesService.getOrderState(hash)));
     }
     @GetMapping("/getTransactionByHash")
     @ApiOperation("获取eth的交易详情")
