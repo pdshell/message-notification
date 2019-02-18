@@ -68,40 +68,60 @@ public class EthMessagesService {
         return ethCoinidClient.ethChainInfo(coinId).getResult();
     }
 
-
-    public List<NotificationRQ> ethMessageNotification(String addr, Integer start, Integer limit) {
-        return messageNotification(BlockChain.ETH.getName().toUpperCase(), addr, start, limit);
+    List<NotificationRQ> ethMessageNotificationList(String addr, Integer start, Integer limit) {
+        return messageNotificationList(BlockChain.ETH.getName().toUpperCase(), addr, start, limit);
     }
 
-    //0 未通知(节点未确认) 1 通知 2 已通知
-    List<NotificationRQ> messageNotification(String type, String addr, Integer start, Integer limit) {
+
+    List<NotificationRQ> ethMessageNotification(String addr) {
+        return messageNotification(BlockChain.ETH.getName().toUpperCase(), addr);
+    }
+
+    List<NotificationRQ> messageNotificationList(String type, String addr, Integer start, Integer limit) {
         Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
-        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndFromOrTo(type, addr, addr, pageable);
+        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndStatusNotAndFromOrTo(type, 0, addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         transactionStorageRQPage.forEach(transactionStorageRQ -> {
             TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
             if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
-                String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + type
-                        : StringUtils.ethBalanceConvert(new BigInteger(transactionInfo.getResult().getValue().substring(2), 16) + "");
-                NotificationRQ notification = new NotificationRQ();
-                notification.setValue(value);
-                notification.setTrxId(transactionStorageRQ.getTrxId());
-                notification.setBlHeight(transactionInfo.getResult().getBlockNumber());
-                notification.setGasPrice(transactionInfo.getResult().getGasPrice());
-                notification.setGasLimit(transactionInfo.getResult().getGas());
-                notification.setFrom(transactionInfo.getResult().getFrom());
-                notification.setTo(transactionInfo.getResult().getTo());
-                notification.setMome(transactionInfo.getResult().getInput());
-                notification.setCreateTime(DateUtil.longToString(transactionStorageRQ.getCreateTime()));
-                TransactionReceipt.ResultBean result = getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult();
-                notification.setTrxState(Integer.parseInt(result.getStatus().substring(2), 16) == 1
-                        ? TransactionStateConstant.SUCCESS
-                        : TransactionStateConstant.FAILURE);
-                notificationRQS.add(notification);
+                setNotification(transactionInfo, type, transactionStorageRQ, notificationRQS);
+            }
+        });
+        return notificationRQS;
+    }
+
+    //0 未通知(节点未确认) 1 通知 2 已通知
+    List<NotificationRQ> messageNotification(String type, String addr) {
+        List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(type, 0, addr, addr);
+        List<NotificationRQ> notificationRQS = new ArrayList<>();
+        transactionStorageRQS.forEach(transactionStorageRQ -> {
+            TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
+            if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
+                setNotification(transactionInfo, type, transactionStorageRQ, notificationRQS);
                 updateTransactionStorage(transactionStorageRQ);
             }
         });
         return notificationRQS;
+    }
+
+    private void setNotification(TransactionInfo transactionInfo, String type, TransactionStorageRQ transactionStorageRQ, List<NotificationRQ> notificationRQS) {
+        String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + type
+                : StringUtils.ethBalanceConvert(new BigInteger(transactionInfo.getResult().getValue().substring(2), 16) + "");
+        NotificationRQ notification = new NotificationRQ();
+        notification.setValue(value);
+        notification.setTrxId(transactionStorageRQ.getTrxId());
+        notification.setBlHeight(transactionInfo.getResult().getBlockNumber());
+        notification.setGasPrice(transactionInfo.getResult().getGasPrice());
+        notification.setGasLimit(transactionInfo.getResult().getGas());
+        notification.setFrom(transactionInfo.getResult().getFrom());
+        notification.setTo(transactionInfo.getResult().getTo());
+        notification.setMome(transactionInfo.getResult().getInput());
+        notification.setCreateTime(DateUtil.longToString(transactionStorageRQ.getCreateTime()));
+        TransactionReceipt.ResultBean result = getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult();
+        notification.setTrxState(Integer.parseInt(result.getStatus().substring(2), 16) == 1
+                ? TransactionStateConstant.SUCCESS
+                : TransactionStateConstant.FAILURE);
+        notificationRQS.add(notification);
     }
 
     @Transactional(rollbackFor = Exception.class)

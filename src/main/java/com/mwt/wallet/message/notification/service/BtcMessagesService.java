@@ -75,31 +75,49 @@ public class BtcMessagesService {
         return btcCoinidClient.getBlockHash(coinId).getResult();
     }
 
-    //0 未通知(节点未确认) 1 通知 2 已通知
-    public List<NotificationRQ> btcMessageNotification(String addr, Integer start, Integer limit) {
+    List<NotificationRQ> btcMessageNotificationList(String addr, Integer start, Integer limit) {
         Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
-        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), addr, addr, pageable);
+        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndStatusNotAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         List<TxHashRQ.ResultBean> resultBeanList = getTransactionByHash(addr).getResult();
         if (resultBeanList.size() != 0 && transactionStorageRQPage.getSize() != 0) {
             transactionStorageRQPage.forEach(transactionStorageRQ -> resultBeanList.forEach(resultBean -> {
                 if (transactionStorageRQ.getTrxId().equals(resultBean.getTx_hash())) {
-                    TransactionRQ.ResultBean transactionRQ = getTransactionByTxHash(resultBean.getTx_hash(), true).getResult();
-                    NotificationRQ notificationRQ = new NotificationRQ();
-                    notificationRQ.setValue(transactionRQ.getVout().get(0).getValue()+" BTC");
-//                    notificationRQ.setTxFee();
-                    notificationRQ.setTimeStamp(DateUtil.longToString(transactionRQ.getTime() * 1000));
-                    notificationRQ.setTrxId(transactionStorageRQ.getTrxId());
-                    notificationRQ.setBlHeight(resultBean.getHeight() + "");
-                    notificationRQ.setFrom(transactionStorageRQ.getFrom());
-                    notificationRQ.setTo(transactionStorageRQ.getTo());
-                    notificationRQ.setCreateTime(DateUtil.longToString(transactionStorageRQ.getCreateTime()));
-                    notificationRQS.add(notificationRQ);
+                    setBTCNotification(resultBean.getTx_hash(), resultBean.getHeight() + "", transactionStorageRQ, notificationRQS);
+                }
+            }));
+        }
+        return notificationRQS;
+    }
+
+    //0 未通知(节点未确认) 1 通知 2 已通知
+    List<NotificationRQ> btcMessageNotification(String addr) {
+        List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr);
+        List<NotificationRQ> notificationRQS = new ArrayList<>();
+        List<TxHashRQ.ResultBean> resultBeanList = getTransactionByHash(addr).getResult();
+        if (resultBeanList.size() != 0 && transactionStorageRQS.size() != 0) {
+            transactionStorageRQS.forEach(transactionStorageRQ -> resultBeanList.forEach(resultBean -> {
+                if (transactionStorageRQ.getTrxId().equals(resultBean.getTx_hash())) {
+                    setBTCNotification(resultBean.getTx_hash(), resultBean.getHeight() + "", transactionStorageRQ, notificationRQS);
                     ethMessagesService.updateTransactionStorage(transactionStorageRQ);
                 }
             }));
         }
         return notificationRQS;
+    }
+
+    private void setBTCNotification(String txHash, String height, TransactionStorageRQ transactionStorageRQ, List<NotificationRQ> notificationRQS) {
+        TransactionRQ.ResultBean transactionRQ = getTransactionByTxHash(txHash, true).getResult();
+        NotificationRQ notificationRQ = new NotificationRQ();
+        notificationRQ.setValue(transactionRQ.getVout().get(0).getValue() + " BTC");
+//                    notificationRQ.setTxFee();
+        notificationRQ.setTimeStamp(DateUtil.longToString(transactionRQ.getTime() * 1000));
+        notificationRQ.setTrxId(transactionStorageRQ.getTrxId());
+        notificationRQ.setBlHeight(height);
+        notificationRQ.setFrom(transactionStorageRQ.getFrom());
+        notificationRQ.setTo(transactionStorageRQ.getTo());
+        notificationRQ.setCreateTime(DateUtil.longToString(transactionStorageRQ.getCreateTime()));
+        notificationRQS.add(notificationRQ);
     }
 
 

@@ -71,8 +71,12 @@ public class VNSMessagesService {
     }
 
 
-    public List<NotificationRQ> vnsMessageNotification(String addr, Integer start, Integer limit) {
-        return ethMessagesService.messageNotification(BlockChain.VNS.getName().toUpperCase(), addr, start, limit);
+    public List<NotificationRQ> vnsMessageNotification(String addr) {
+        return ethMessagesService.messageNotification(BlockChain.VNS.getName().toUpperCase(), addr);
+    }
+
+    public List<NotificationRQ> vnsMessageNotificationList(String addr, Integer start, Integer limit) {
+        return ethMessagesService.messageNotificationList(BlockChain.VNS.getName().toUpperCase(), addr, start, limit);
     }
 
 }
