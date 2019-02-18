@@ -79,7 +79,7 @@ public class EthMessagesService {
 
     List<NotificationRQ> messageNotificationList(String type, String addr, Integer start, Integer limit) {
         Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
-        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndStatusNotAndFromOrTo(type, 0, addr, addr, pageable);
+        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeContainingAndStatusNotAndFromOrTo(type, 0, addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         if (transactionStorageRQPage.getSize() != 0) {
             transactionStorageRQPage.forEach(transactionStorageRQ -> {
@@ -92,7 +92,7 @@ public class EthMessagesService {
         return notificationRQS;
     }
 
-    //0 未通知(节点未确认) 1 通知 2 已通知
+    //0 未通知(节点未确认) 1 已通知
     List<NotificationRQ> messageNotification(String type, String addr) {
         List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(type, 0, addr, addr);
         List<NotificationRQ> notificationRQS = new ArrayList<>();

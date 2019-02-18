@@ -24,3 +24,9 @@ application:
     eos-coinid: https://mainnet-eos.coinid.pro
   vns:
     vns-coinid: https://mainnet-gvns.coinid.pro
+
+logging:
+  level:
+    root: WARN
+    org.springframework.web: DEBUG
+    org.hibernate: ERROR

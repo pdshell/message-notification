@@ -77,7 +77,7 @@ public class BtcMessagesService {
 
     List<NotificationRQ> btcMessageNotificationList(String addr, Integer start, Integer limit) {
         Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
-        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndStatusNotAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr, pageable);
+        Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeContainingAndStatusNotAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         List<TxHashRQ.ResultBean> resultBeanList = getTransactionByHash(addr).getResult();
         if (resultBeanList.size() != 0 && transactionStorageRQPage.getSize() != 0) {
@@ -90,7 +90,7 @@ public class BtcMessagesService {
         return notificationRQS;
     }
 
-    //0 未通知(节点未确认) 1 通知 2 已通知
+    //0 未通知(节点未确认) 1 已通知
     List<NotificationRQ> btcMessageNotification(String addr) {
         List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr);
         List<NotificationRQ> notificationRQS = new ArrayList<>();

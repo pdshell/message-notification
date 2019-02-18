@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface TransactionStorageRepository extends CrudRepository<TransactionStorageRQ, Long> {
 
-    Page<TransactionStorageRQ> findByTypeAndStatusNotAndFromOrTo(String type, Integer status, String from, String to, Pageable pageable);
+    Page<TransactionStorageRQ> findByTypeContainingAndStatusNotAndFromOrTo(String type, Integer status, String from, String to, Pageable pageable);
 
     List<TransactionStorageRQ> findAllByTypeAndStatusAndFromOrTo(String type, Integer status, String from, String to);
 
     Optional<TransactionStorageRQ> findByTrxId(String trxId);
 
-    List<TransactionStorageRQ> findAllByTrxIdIn(List<String> trxIds);
+    List<TransactionStorageRQ> findAllByStatus(Integer status);
 }
