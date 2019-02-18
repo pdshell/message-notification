@@ -81,12 +81,14 @@ public class EthMessagesService {
         Pageable pageable = PageRequest.of(start > 0 ? start - 1 : 0, limit, new Sort(Sort.Direction.DESC, "createTime"));
         Page<TransactionStorageRQ> transactionStorageRQPage = transactionStorageRepository.findByTypeAndStatusNotAndFromOrTo(type, 0, addr, addr, pageable);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
-        transactionStorageRQPage.forEach(transactionStorageRQ -> {
-            TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
-            if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
-                setNotification(transactionInfo, type, transactionStorageRQ, notificationRQS);
-            }
-        });
+        if (transactionStorageRQPage.getSize() != 0) {
+            transactionStorageRQPage.forEach(transactionStorageRQ -> {
+                TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
+                if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
+                    setNotification(transactionInfo, type, transactionStorageRQ, notificationRQS);
+                }
+            });
+        }
         return notificationRQS;
     }
 
@@ -94,17 +96,20 @@ public class EthMessagesService {
     List<NotificationRQ> messageNotification(String type, String addr) {
         List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(type, 0, addr, addr);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
-        transactionStorageRQS.forEach(transactionStorageRQ -> {
-            TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
-            if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
-                setNotification(transactionInfo, type, transactionStorageRQ, notificationRQS);
-                updateTransactionStorage(transactionStorageRQ);
-            }
-        });
+        if (transactionStorageRQS.size() != 0) {
+            transactionStorageRQS.forEach(transactionStorageRQ -> {
+                TransactionInfo transactionInfo = getTransactionByHash(transactionStorageRQ.getTrxId());
+                if (Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
+                    setNotification(transactionInfo, type, transactionStorageRQ, notificationRQS);
+                    updateTransactionStorage(transactionStorageRQ);
+                }
+            });
+        }
         return notificationRQS;
     }
 
-    private void setNotification(TransactionInfo transactionInfo, String type, TransactionStorageRQ transactionStorageRQ, List<NotificationRQ> notificationRQS) {
+    private void setNotification(TransactionInfo transactionInfo, String type, TransactionStorageRQ
+            transactionStorageRQ, List<NotificationRQ> notificationRQS) {
         String value = transactionInfo.getResult().getValue().equals("0x0") ? "0 " + type
                 : StringUtils.ethBalanceConvert(new BigInteger(transactionInfo.getResult().getValue().substring(2), 16) + "");
         NotificationRQ notification = new NotificationRQ();
