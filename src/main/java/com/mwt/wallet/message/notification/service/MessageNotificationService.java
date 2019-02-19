@@ -3,11 +3,13 @@ package com.mwt.wallet.message.notification.service;
 import com.mwt.wallet.message.notification.Constant.BlockChain;
 import com.mwt.wallet.message.notification.repository.redis.TransactionStorageRepository;
 import com.mwt.wallet.message.notification.web.pojo.ClickMessageNotificationVM;
+import com.mwt.wallet.message.notification.web.pojo.TransactionStorageRQ;
 import com.mwt.wallet.message.notification.web.pojo.eth.NotificationRQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageNotificationService {
@@ -58,35 +60,45 @@ public class MessageNotificationService {
 
     //1 from已读 2 to已读 3 都已读
     public boolean clickMessageNotification(ClickMessageNotificationVM clickMessageNotificationVM) {
-        transactionStorageRepository.findByTrxId(clickMessageNotificationVM.getTrxId()).ifPresent(transactionStorageRQ -> {
-            if (transactionStorageRQ.getFrom().equals(clickMessageNotificationVM.getAddr())) {
-                switch (transactionStorageRQ.getState()) {
-                    case 0:
-                        transactionStorageRQ.setState(1);
-                        transactionStorageRepository.save(transactionStorageRQ);
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        transactionStorageRQ.setState(3);
-                        transactionStorageRepository.save(transactionStorageRQ);
-                        break;
-                }
-            } else {
-                switch (transactionStorageRQ.getState()) {
-                    case 0:
-                        transactionStorageRQ.setState(2);
-                        transactionStorageRepository.save(transactionStorageRQ);
-                        break;
-                    case 1:
-                        transactionStorageRQ.setState(3);
-                        transactionStorageRepository.save(transactionStorageRQ);
-                        break;
-                    case 2:
-                        break;
-                }
-            }
-        });
+        if (Optional.ofNullable(clickMessageNotificationVM.getTrxId()).isPresent()) {
+            transactionStorageRepository.findByStateAndFromOrTo(0, clickMessageNotificationVM.getAddr(), clickMessageNotificationVM.getAddr())
+                    .forEach(transactionStorageRQ ->
+                            updateTransactionState(transactionStorageRQ, clickMessageNotificationVM.getAddr()));
+        } else {
+            transactionStorageRepository.findByTrxId(clickMessageNotificationVM.getTrxId()).
+                    ifPresent(transactionStorageRQ ->
+                            updateTransactionState(transactionStorageRQ, clickMessageNotificationVM.getAddr()));
+        }
         return true;
+    }
+
+    private void updateTransactionState(TransactionStorageRQ transactionStorageRQ, String addr) {
+        if (transactionStorageRQ.getFrom().equals(addr)) {
+            switch (transactionStorageRQ.getState()) {
+                case 0:
+                    transactionStorageRQ.setState(1);
+                    transactionStorageRepository.save(transactionStorageRQ);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    transactionStorageRQ.setState(3);
+                    transactionStorageRepository.save(transactionStorageRQ);
+                    break;
+            }
+        } else {
+            switch (transactionStorageRQ.getState()) {
+                case 0:
+                    transactionStorageRQ.setState(2);
+                    transactionStorageRepository.save(transactionStorageRQ);
+                    break;
+                case 1:
+                    transactionStorageRQ.setState(3);
+                    transactionStorageRepository.save(transactionStorageRQ);
+                    break;
+                case 2:
+                    break;
+            }
+        }
     }
 }

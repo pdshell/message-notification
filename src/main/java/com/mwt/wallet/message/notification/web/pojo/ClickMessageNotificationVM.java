@@ -8,6 +8,5 @@ import javax.validation.constraints.NotNull;
 public class ClickMessageNotificationVM {
     @NotNull
     private String addr;
-    @NotNull
     private String trxId;
 }

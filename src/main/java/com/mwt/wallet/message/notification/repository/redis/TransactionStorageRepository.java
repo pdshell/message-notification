@@ -19,4 +19,6 @@ public interface TransactionStorageRepository extends CrudRepository<Transaction
     Optional<TransactionStorageRQ> findByTrxId(String trxId);
 
     List<TransactionStorageRQ> findAllByStatus(Integer status);
+
+    List<TransactionStorageRQ> findByStateAndFromOrTo(Integer state, String from, String to);
 }
