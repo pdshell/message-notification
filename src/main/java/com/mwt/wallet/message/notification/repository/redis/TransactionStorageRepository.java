@@ -14,7 +14,7 @@ public interface TransactionStorageRepository extends CrudRepository<Transaction
 
     Page<TransactionStorageRQ> findByTypeContainingAndStatusNotAndFromOrTo(String type, Integer status, String from, String to, Pageable pageable);
 
-    List<TransactionStorageRQ> findAllByTypeAndStatusAndFromOrTo(String type, Integer status, String from, String to);
+    List<TransactionStorageRQ> findAllByTypeContainingAndStatusAndFromOrTo(String type, Integer status, String from, String to);
 
     Optional<TransactionStorageRQ> findByTrxId(String trxId);
 

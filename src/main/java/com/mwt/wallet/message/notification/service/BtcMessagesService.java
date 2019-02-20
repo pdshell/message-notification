@@ -92,7 +92,7 @@ public class BtcMessagesService {
 
     //0 未通知(节点未确认) 1 已通知
     List<NotificationRQ> btcMessageNotification(String addr) {
-        List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr);
+        List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeContainingAndStatusAndFromOrTo(BlockChain.BTC.getName().toUpperCase(), 0, addr, addr);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         List<TxHashRQ.ResultBean> resultBeanList = getTransactionByHash(addr).getResult();
         if (resultBeanList.size() != 0 && transactionStorageRQS.size() != 0) {

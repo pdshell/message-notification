@@ -94,7 +94,7 @@ public class EthMessagesService {
 
     //0 未通知(节点未确认) 1 已通知
     List<NotificationRQ> messageNotification(String type, String addr) {
-        List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeAndStatusAndFromOrTo(type, 0, addr, addr);
+        List<TransactionStorageRQ> transactionStorageRQS = transactionStorageRepository.findAllByTypeContainingAndStatusAndFromOrTo(type, 0, addr, addr);
         List<NotificationRQ> notificationRQS = new ArrayList<>();
         if (transactionStorageRQS.size() != 0) {
             transactionStorageRQS.forEach(transactionStorageRQ -> {
