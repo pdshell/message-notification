@@ -8,6 +8,7 @@ import com.mwt.wallet.message.notification.service.VNSMessagesService;
 import com.mwt.wallet.message.notification.web.pojo.TransactionStorageRQ;
 import com.mwt.wallet.message.notification.web.pojo.btc.TransactionRQ;
 import com.mwt.wallet.message.notification.web.pojo.eth.TransactionInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class MessageScheduler {
 
     @Autowired

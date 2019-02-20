@@ -26,5 +26,11 @@ public class TransactionInfo {
         private String v;
         private String r;
         private String s;
+        private String chainId;
+        private String condition;
+        private String creates;
+        private String publicKey;
+        private String standardV;
+        private String raw;
     }
 }
