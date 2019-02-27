@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * java后台极光推送方式二：使用Java SDK
+ * java后台极光推送：使用Java SDK
  */
 @SuppressWarnings({"deprecation", "restriction"})
 public class JiguangPush {
