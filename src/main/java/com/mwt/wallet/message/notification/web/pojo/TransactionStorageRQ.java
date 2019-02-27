@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @RedisHash(value = "TransactionStorage")
 @Data
@@ -27,9 +28,10 @@ public class TransactionStorageRQ {
     private String from;
     @Indexed
     private String to;
+    private BigDecimal value;
     private Long createTime;
     @Indexed
     private int status;
-//    @Indexed
+    //    @Indexed
     private int state;
 }

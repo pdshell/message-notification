@@ -7,6 +7,7 @@ import com.mwt.wallet.message.notification.web.pojo.TransactionStorageRQ;
 import com.mwt.wallet.message.notification.web.pojo.eth.NotificationRQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +73,8 @@ public class MessageNotificationService {
         return true;
     }
 
-    private void updateTransactionState(TransactionStorageRQ transactionStorageRQ, String addr) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTransactionState(TransactionStorageRQ transactionStorageRQ, String addr) {
         if (transactionStorageRQ.getFrom().equals(addr)) {
             switch (transactionStorageRQ.getState()) {
                 case 0:

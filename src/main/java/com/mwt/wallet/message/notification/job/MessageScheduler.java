@@ -31,7 +31,7 @@ public class MessageScheduler {
     @Autowired
     private VNSMessagesService vnsMessagesService;
 
-    @Scheduled(fixedRate = 3000)
+//    @Scheduled(fixedRate = 3000)
     public void updateMessages() {
         transactionStorageRepository.findAllByStatus(0).forEach(transactionStorageRQ -> {
             if (transactionStorageRQ.getType().contains("|"))
@@ -55,6 +55,7 @@ public class MessageScheduler {
         if (Optional.ofNullable(transactionRQ.getResult()).isPresent() && transactionRQ.getResult().getConfirmations() > 0) {
             transactionStorageRQ.setStatus(1);
             transactionStorageRepository.save(transactionStorageRQ);
+            JiguangPush.jiguangPush(transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType());
         }
     }
 
@@ -66,6 +67,7 @@ public class MessageScheduler {
                 && Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
             transactionStorageRQ.setStatus(1);
             transactionStorageRepository.save(transactionStorageRQ);
+            JiguangPush.jiguangPush(transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType());
         }
     }
 

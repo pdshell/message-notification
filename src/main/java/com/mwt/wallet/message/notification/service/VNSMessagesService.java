@@ -1,29 +1,19 @@
 package com.mwt.wallet.message.notification.service;
 
 import com.mwt.wallet.message.notification.Constant.BlockChain;
-import com.mwt.wallet.message.notification.Constant.ETHConstant;
-import com.mwt.wallet.message.notification.Constant.TransactionStateConstant;
 import com.mwt.wallet.message.notification.Constant.VNSConstant;
-import com.mwt.wallet.message.notification.client.EthCoinidClient;
 import com.mwt.wallet.message.notification.client.VNSCoinidClient;
 import com.mwt.wallet.message.notification.util.StringUtils;
 import com.mwt.wallet.message.notification.web.pojo.CoinIdVM;
-import com.mwt.wallet.message.notification.web.pojo.TransactionStorageRQ;
 import com.mwt.wallet.message.notification.web.pojo.eth.BlockNumber;
 import com.mwt.wallet.message.notification.web.pojo.eth.NotificationRQ;
 import com.mwt.wallet.message.notification.web.pojo.eth.TransactionInfo;
 import com.mwt.wallet.message.notification.web.pojo.eth.TransactionReceipt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VNSMessagesService {
