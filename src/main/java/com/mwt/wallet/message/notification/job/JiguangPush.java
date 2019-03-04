@@ -58,6 +58,7 @@ public class JiguangPush {
                         .addPlatformNotification(AndroidNotification.newBuilder()
                                 .addExtra("type", "infomation")
                                 .setAlert(alert)
+                                .setAlertType(1)
                                 .build())
                         .addPlatformNotification(IosNotification.newBuilder()
                                 .addExtra("type", "infomation")

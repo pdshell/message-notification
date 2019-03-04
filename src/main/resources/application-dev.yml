@@ -27,6 +27,6 @@ application:
 
 logging:
   level:
-    root: WARN
+    root: INFO
     org.springframework.web: DEBUG
     org.hibernate: ERROR
