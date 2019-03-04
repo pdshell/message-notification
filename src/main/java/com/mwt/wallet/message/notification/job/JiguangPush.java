@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 public class JiguangPush {
 
     private static final Logger log = LoggerFactory.getLogger(JiguangPush.class);
-    private static String masterSecret = "xxxxxxxxxxxxxxxxx";
-    private static String appKey = "xxxxxxxxxxxxxxxx";
+    private static String masterSecret = "c9f1fbba284cd9a3b31b88f9";
+    private static String appKey = "a4f00907673d0f2f3e24503d";
 //    private static final String ALERT = "【CoinID钱包】推送信息";
 
     /**

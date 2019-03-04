@@ -31,7 +31,7 @@ public class MessageScheduler {
     @Autowired
     private VNSMessagesService vnsMessagesService;
 
-//    @Scheduled(fixedRate = 3000)
+    @Scheduled(cron = "0/3 * * * * ? ")
     public void updateMessages() {
         transactionStorageRepository.findAllByStatus(0).forEach(transactionStorageRQ -> {
             if (transactionStorageRQ.getType().contains("|"))
