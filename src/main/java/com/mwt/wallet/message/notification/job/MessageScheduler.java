@@ -1,6 +1,7 @@
 package com.mwt.wallet.message.notification.job;
 
 import com.mwt.wallet.message.notification.Constant.BlockChain;
+import com.mwt.wallet.message.notification.Constant.TransactionStateConstant;
 import com.mwt.wallet.message.notification.repository.redis.TransactionStorageRepository;
 import com.mwt.wallet.message.notification.service.BtcMessagesService;
 import com.mwt.wallet.message.notification.service.EthMessagesService;
@@ -8,6 +9,7 @@ import com.mwt.wallet.message.notification.service.VNSMessagesService;
 import com.mwt.wallet.message.notification.web.pojo.TransactionStorageRQ;
 import com.mwt.wallet.message.notification.web.pojo.btc.TransactionRQ;
 import com.mwt.wallet.message.notification.web.pojo.eth.TransactionInfo;
+import com.mwt.wallet.message.notification.web.pojo.eth.TransactionReceipt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -55,7 +57,7 @@ public class MessageScheduler {
         if (Optional.ofNullable(transactionRQ.getResult()).isPresent() && transactionRQ.getResult().getConfirmations() > 0) {
             transactionStorageRQ.setStatus(1);
             transactionStorageRepository.save(transactionStorageRQ);
-            JiguangPush.jiguangPush(transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType());
+            JiguangPush.jiguangPush(transactionStorageRQ.getPubKey(), transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType(), "SUCCESS");
         }
     }
 
@@ -67,7 +69,12 @@ public class MessageScheduler {
                 && Optional.ofNullable(transactionInfo.getResult().getBlockNumber()).isPresent()) {
             transactionStorageRQ.setStatus(1);
             transactionStorageRepository.save(transactionStorageRQ);
-            JiguangPush.jiguangPush(transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType());
+            TransactionReceipt.ResultBean result = transactionStorageRQ.getType().equals(BlockChain.ETH.getName().toUpperCase()) ?
+                    ethMessagesService.getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult()
+                    : vnsMessagesService.getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult();
+            JiguangPush.jiguangPush(transactionStorageRQ.getPubKey(), transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType(), Integer.parseInt(result.getStatus().substring(2), 16) == 1
+                    ? TransactionStateConstant.SUCCESS + ""
+                    : TransactionStateConstant.FAILURE + "");
         }
     }
 
