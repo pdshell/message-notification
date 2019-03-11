@@ -15,8 +15,8 @@ import cn.jpush.api.push.model.notification.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * java后台极光推送：使用Java SDK
@@ -32,30 +32,49 @@ public class JiguangPush {
     /**
      * 极光推送
      */
-    public static void jiguangPush(List<String> aliases, String from, String to, String value, String type) {
-        String ALERT = "【CoinID钱包】由" + from + "转账到" + to + "账户的" + value + "转账" + type;
+    public static void jiguangPush(String from, String to, String value, String type) {
+        String ALERTFROM = "【CoinID钱包】" + from + "转账" + value + type;
+        String ALERTTO = "【CoinID钱包】" + to + "到账" + value + type;
 //        String tag = "" //声明标签
 //        String alias = "123456";//声明别名
-        log.info("对别名在" + aliases + "的用户推送信息");
-        PushResult result = push(aliases, ALERT);
+        send(from, ALERTFROM);
+        send(to, ALERTTO);
+    }
+
+    private static void send(String address, String ALERT) {
+        String tag = address.substring(0, 10) + address.substring(address.length() - 10);
+        log.info("对标签在" + tag + "的用户推送信息");
+        PushResult result = push(tag, ALERT);
         if (result != null && result.isResultOK()) {
-            log.info("对别名在" + aliases + "的信息推送成功！");
+            log.info("对标签在" + tag + "的信息推送成功！");
         } else {
-            log.info("对别名在" + aliases + "的信息推送失败！");
+            log.info("对标签在" + tag + "的信息推送失败！");
         }
     }
+
+//    public static void main(String[] args) {
+//        String a = ("CoFv5Hph6PL9m6iuRZW5ZSe5owbqdodSyMhFfNut5R3pPYdhKfVATJnTaJgn3vjiDcbUJym7pcTdpsxTdWvvcanf");
+//        String b = a.substring(0, 10) + a.substring(a.length() - 10);
+//        System.out.println("________" + b);
+//        PushResult result = push(b, "非常好");
+//        if (result != null && result.isResultOK()) {
+//            log.info("对别名在" + b + "的信息推送成功！");
+//        } else {
+//            log.info("对别名在" + b + "的信息推送失败！");
+//        }
+//    }
 
     /**
      * 生成极光推送对象PushPayload（采用java SDK）
      *
-     * @param aliases
+     * @param tag
      * @param alert
      * @return PushPayload
      */
-    private static PushPayload buildPushObject_android_ios_alias_alert(List<String> aliases, String alert) {
+    private static PushPayload buildPushObject_android_ios_alias_alert(String tag, String alert) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.android_ios())
-                .setAudience(Audience.alias(aliases))
+                .setAudience(Audience.tag(tag))
                 .setNotification(Notification.newBuilder()
                         .addPlatformNotification(AndroidNotification.newBuilder()
                                 .addExtra("type", "infomation")
@@ -77,14 +96,14 @@ public class JiguangPush {
     /**
      * 极光推送方法(采用java SDK)
      *
-     * @param aliases
+     * @param tag
      * @param alert
      * @return PushResult
      */
-    private static PushResult push(List<String> aliases, String alert) {
+    private static PushResult push(String tag, String alert) {
         ClientConfig clientConfig = ClientConfig.getInstance();
         JPushClient jpushClient = new JPushClient(masterSecret, appKey, null, clientConfig);
-        PushPayload payload = buildPushObject_android_ios_alias_alert(aliases, alert);
+        PushPayload payload = buildPushObject_android_ios_alias_alert(tag, alert);
         try {
             return jpushClient.sendPush(payload);
         } catch (APIConnectionException e) {

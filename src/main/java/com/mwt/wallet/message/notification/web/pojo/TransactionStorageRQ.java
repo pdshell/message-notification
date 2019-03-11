@@ -18,8 +18,6 @@ public class TransactionStorageRQ {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private List<String> pubKey;
-
     @Indexed
     private String trxId;
 

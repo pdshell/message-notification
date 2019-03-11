@@ -57,7 +57,7 @@ public class MessageScheduler {
         if (Optional.ofNullable(transactionRQ.getResult()).isPresent() && transactionRQ.getResult().getConfirmations() > 0) {
             transactionStorageRQ.setStatus(1);
             transactionStorageRepository.save(transactionStorageRQ);
-            JiguangPush.jiguangPush(transactionStorageRQ.getPubKey(), transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType(), "SUCCESS");
+            JiguangPush.jiguangPush(transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType(), "SUCCESS");
         }
     }
 
@@ -72,7 +72,7 @@ public class MessageScheduler {
             TransactionReceipt.ResultBean result = transactionStorageRQ.getType().equals(BlockChain.ETH.getName().toUpperCase()) ?
                     ethMessagesService.getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult()
                     : vnsMessagesService.getTransactionReceipt(transactionStorageRQ.getTrxId()).getResult();
-            JiguangPush.jiguangPush(transactionStorageRQ.getPubKey(), transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType(), Integer.parseInt(result.getStatus().substring(2), 16) == 1
+            JiguangPush.jiguangPush(transactionStorageRQ.getFrom(), transactionStorageRQ.getTo(), transactionStorageRQ.getValue() + " " + transactionStorageRQ.getType(), Integer.parseInt(result.getStatus().substring(2), 16) == 1
                     ? TransactionStateConstant.SUCCESS + ""
                     : TransactionStateConstant.FAILURE + "");
         }
