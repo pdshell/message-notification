@@ -15,9 +15,6 @@ import cn.jpush.api.push.model.notification.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * java后台极光推送：使用Java SDK
  */
@@ -52,17 +49,6 @@ public class JiguangPush {
         }
     }
 
-//    public static void main(String[] args) {
-//        String a = ("CoFv5Hph6PL9m6iuRZW5ZSe5owbqdodSyMhFfNut5R3pPYdhKfVATJnTaJgn3vjiDcbUJym7pcTdpsxTdWvvcanf");
-//        String b = a.substring(0, 10) + a.substring(a.length() - 10);
-//        System.out.println("________" + b);
-//        PushResult result = push(b, "非常好");
-//        if (result != null && result.isResultOK()) {
-//            log.info("对别名在" + b + "的信息推送成功！");
-//        } else {
-//            log.info("对别名在" + b + "的信息推送失败！");
-//        }
-//    }
 
     /**
      * 生成极光推送对象PushPayload（采用java SDK）

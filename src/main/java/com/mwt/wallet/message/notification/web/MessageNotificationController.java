@@ -18,6 +18,9 @@ public class MessageNotificationController {
     @Autowired
     private MessageNotificationService messageNotificationService;
 
+    @Autowired
+    private TransactionStorageRepository transactionStorageRepository;
+
     @GetMapping("/getMessageNotification")
     @ApiOperation("获取eth，btc，vns的消息通知")
     public ResponseEntity getMessageNotification(BlockChain blockChain, String addr) {
@@ -36,5 +39,9 @@ public class MessageNotificationController {
         return ResponseEntity.ok(messageNotificationService.clickMessageNotification(clickMessageNotificationVM));
     }
 
+//    @GetMapping("/getNotification")
+//    public ResponseEntity getNotification(List<String> trxIds) {
+//        return ResponseEntity.ok(transactionStorageRepository.findAllByTrxIdIn(trxIds));
+//    }
 
 }
