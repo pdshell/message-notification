@@ -36,4 +36,5 @@ public class MessageNotificationController {
         return ResponseEntity.ok(messageNotificationService.clickMessageNotification(clickMessageNotificationVM));
     }
 
+
 }
